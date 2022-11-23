@@ -2,6 +2,7 @@ from flask import Flask, request, redirect
 from database import DBSession, Message, User, Chat
 from datetime import datetime
 import json
+import ijson
 
 ALLOWED_EXTENSIONS = {'json'}
 
@@ -50,7 +51,7 @@ def insert_messages(chat_id, messages):
             msg_text = message['text']
 
         if msg_text =='':
-            msg_text == '[其他消息]'
+            msg_text = '[其他消息]'
         message_date = datetime.strptime(message['date'], '%Y-%m-%dT%H:%M:%S')
         new_msg = Message(id=message['id'], link='https://t.me/c/{}/{}'.format(str(chat_id)[4:],message['id']), text=msg_text, video='', photo='',
                           audio='', voice='', type='text', category='', from_id=message['from_id'][4:], from_chat=chat_id,date=message_date)
@@ -78,11 +79,11 @@ def allowed_file(filename):
 def upload_file():
     if request.method == 'POST':
         if 'file' not in request.files:
-            flash('No file part')
+            Flask('No file part')
             return redirect(request.url)
         file = request.files['file']
         if file.filename == '':
-            flash('No selected file')
+            Flask('No selected file')
             return redirect(request.url)
         if file and allowed_file(file.filename):
             file_content = file.read().decode('utf-8')
